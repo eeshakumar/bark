@@ -5,19 +5,19 @@
 
 # ffmpeg must be installed and available on command line
 
-
-from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution import UniformVehicleDistribution
+from modules.runtime.scenario.scenario_generation.configurable_scenario_generation import ConfigurableScenarioGeneration
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.runtime import Runtime
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
 import os
+import time
 
-scenario_param_file ="highway_merging.json" # must be within examples params folder
+scenario_param_file ="intersection_configurable.json" # must be within examples params folder
 param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
-scenario_generation = UniformVehicleDistribution(num_scenarios=10, random_seed=0, params=param_server)
+scenario_generation = ConfigurableScenarioGeneration(num_scenarios=10, random_seed=0, params=param_server)
 
-viewer = MPViewer(params=param_server, x_range=[5060, 5160], y_range=[5070,5150])
+viewer = MPViewer(params=param_server, use_world_bounds=True)
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
                                            0.2]
@@ -27,24 +27,28 @@ scenario, idx = scenario_generation.get_next_scenario()
 
 
 # Rendering WITHOUT intermediate steps
-video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
-env = Runtime(0.2,
-              video_renderer,
-              scenario_generation,
-              render=True)
-env.reset()
-for _ in range(0, 5):
-  env.step()  
-video_renderer.export_video(filename="examples/scenarios/test_video_step")
+video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time/10)
+world = scenario.get_world_state()
+for _ in range(0, 20):
+  world.Step(sim_step_time)
+  viewer.clear()
+  viewer.drawWorld(world)
+  for id, agent in world.agents.items():
+    viewer.drawRoadCorridor(agent.road_corridor, color="green")
+
+  # viewer.drawRoadCorridor(agent2.road_corridor, color="blue")
+  viewer.show(block=False)
+  time.sleep(sim_step_time/sim_real_time_factor)
+#video_renderer.export_video(filename="examples/scenarios/test_video_step")
 
 # Rendering WITH intermediate steps
-video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time, render_intermediate_steps=10)
-env = Runtime(0.2,
-              video_renderer,
-              scenario_generation,
-              render=True)
-env.reset()
-for _ in range(0, 5):
-  env.step()  
+# video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time, render_intermediate_steps=10)
+# env = Runtime(0.2,
+#               video_renderer,
+#               scenario_generation,
+#               render=True)
+# env.reset()
+# for _ in range(0, 5):
+#   env.step()  
 
-video_renderer.export_video(filename="examples/scenarios/test_video_intermediate")
+# video_renderer.export_video(filename="examples/scenarios/test_video_intermediate")
