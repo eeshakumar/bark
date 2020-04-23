@@ -37,6 +37,7 @@ using modules::world::map::RoadCorridorPtr;
 using modules::world::goal_definition::GoalDefinition;
 using modules::world::goal_definition::GoalDefinitionPtr;
 using modules::world::opendrive::XodrRoadId;
+using modules::world::opendrive::XodrDrivingDirection;
 using models::dynamic::StateDefinition;
 
 class Agent : public Object {
@@ -81,6 +82,10 @@ class Agent : public Object {
     return road_corridor_road_ids_;
   }
 
+  XodrDrivingDirection GetRoadCorridorDrivingDirection() const {
+    return road_corridor_driving_direction_;
+  }
+
   modules::geometry::Point2d GetCurrentPosition() const {
     const State& state = GetCurrentState();
     return modules::geometry::Point2d(
@@ -106,6 +111,10 @@ class Agent : public Object {
 
   void SetRoadCorridorRoadIds(const std::vector<XodrRoadId>& road_ids_) {
     road_corridor_road_ids_ = road_ids_;
+  }
+
+  void SetRoadCorridorDrivingDirection(const XodrDrivingDirection driving_direction) {
+    road_corridor_driving_direction_ = driving_direction;
   }
 
   void SetStateInputHistory(const StateActionHistory& history) {
@@ -138,6 +147,7 @@ class Agent : public Object {
   uint32_t max_history_length_;
   modules::world::goal_definition::GoalDefinitionPtr goal_definition_;
   std::vector<XodrRoadId> road_corridor_road_ids_;
+  XodrDrivingDirection road_corridor_driving_direction_;
 };
 
 typedef std::shared_ptr<Agent> AgentPtr;

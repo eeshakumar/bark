@@ -291,7 +291,7 @@ void MapInterface::GenerateRoadCorridor(
       // auto local_driving_direction = driving_direction;
       // if (lane.second->GetDrivingDirection() != driving_direction)
       //   local_driving_direction = lane.second->GetDrivingDirection();
-        
+
       if (count + 1 <= road_ids.size()) {
         std::vector<XodrRoadId> vec;
         std::copy(
@@ -301,7 +301,7 @@ void MapInterface::GenerateRoadCorridor(
 
         // for (auto v: vec)
         //   std::cout << v << std::endl;
-        
+
         std::pair<XodrLaneId, bool> next_lane =
           roadgraph_->GetNextLane(vec, lane.first);
         if (next_lane.second && next_road)
@@ -361,6 +361,7 @@ void MapInterface::GenerateRoadCorridor(
   CalculateLaneCorridors(road_corridor, road_ids[0]);
   road_corridor->ComputeRoadPolygon();
   road_corridor->SetRoadIds(road_ids);
+  road_corridor->SetDrivingDirection(driving_direction);
   road_corridors_[road_corridor_hash] = road_corridor;
 }
 
