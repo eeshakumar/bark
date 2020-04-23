@@ -27,19 +27,23 @@ scenario, idx = scenario_generation.get_next_scenario()
 
 
 # Rendering WITHOUT intermediate steps
-video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time/10)
+video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time/3)
 world = scenario.get_world_state()
-for _ in range(0, 20):
+for _ in range(0, 120):
   world.Step(sim_step_time)
   viewer.clear()
-  viewer.drawWorld(world)
-  for id, agent in world.agents.items():
-    viewer.drawRoadCorridor(agent.road_corridor, color="green")
+  video_renderer.drawWorld(world)
+  # for id, agent in world.agents.items():
+  #   print(agent.state)
+  #   viewer.drawRoadCorridor(agent.road_corridor, color="green")
+  #   print(id)
+  #   time.sleep(2)
+  #   viewer.show(block=False)
 
   # viewer.drawRoadCorridor(agent2.road_corridor, color="blue")
   viewer.show(block=False)
-  time.sleep(sim_step_time/sim_real_time_factor)
-#video_renderer.export_video(filename="examples/scenarios/test_video_step")
+
+video_renderer.export_video(filename="examples/scenarios/test_video_step")
 
 # Rendering WITH intermediate steps
 # video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time, render_intermediate_steps=10)

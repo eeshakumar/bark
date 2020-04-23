@@ -27,6 +27,7 @@ using namespace modules::commons;
 using namespace modules::models::behavior;
 using namespace modules::models::execution;
 using namespace modules::geometry;
+using modules::world::opendrive::XodrRoadId;
 
 void python_agent(py::module m) {
   py::class_<Agent, AgentPtr>(m, "Agent")
@@ -80,10 +81,11 @@ void python_agent(py::module m) {
             a.GetExecutionModel(),  // 7
             a.GetDynamicModel(),  // 8
             a.GetCurrentState(),  // 9
-            GoalDefinitionToPython(a.GetGoalDefinition()));  // 10
+            GoalDefinitionToPython(a.GetGoalDefinition()), // 10
+            a.GetRoadCorridorRoadIds());  // 11
       },
       [](py::tuple t) {
-        if (t.size() != 10)
+        if (t.size() != 11)
           throw std::runtime_error("Invalid agent state!");
 
         using modules::models::dynamic::SingleTrackModel;
@@ -99,6 +101,7 @@ void python_agent(py::module m) {
           PythonToGoalDefinition(t[9].cast<py::tuple>()));
         agent.SetAgentId(t[2].cast<AgentId>());
         agent.SetStateInputHistory(t[0].cast<StateActionHistory>());
+        agent.SetRoadCorridorRoadIds(t[10].cast<std::vector<XodrRoadId>>());
         return agent;
       }));
 
