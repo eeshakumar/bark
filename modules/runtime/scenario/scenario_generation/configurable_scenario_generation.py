@@ -185,6 +185,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                       world, agent_params)
       sink_source_default_params[idx]["AgentParams"] = agent_params.convert_to_dict()
 
+      self.update_road_corridors(sink_source_agents, road_corridor)
       agent_list.extend(sink_source_agents)
       collected_sources_sinks_default_param_configs.append(sink_source_config)
 
@@ -193,6 +194,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     scenario._eval_agent_ids = [idx for idx, value in enumerate(controlled_agent_ids_all) if value==True]
     
     return scenario
+
+  def update_road_corridors(self, sink_source_agents, road_corridor):
+    for idx, agent in enumerate(sink_source_agents):
+      agent.road_corridor = road_corridor
 
   def update_agent_ids(self, agent_list):
     for idx, agent in enumerate(agent_list):
@@ -298,7 +303,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
       if not probablistic_conflict_resolution:
         raise NotImplemented("Not implemented yet.")
-      
+
       for pairwise_collision in pairwise_collisions:
         source_sink_idx_1 = pairwise_collision[0][0]
         source_sink_idx_2 = pairwise_collision[1][0]
@@ -319,7 +324,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
             if not agent_idx_2 in must_delete[source_sink_idx_2]:
               must_delete[source_sink_idx_2].append(agent_idx_2)
 
-    for source_sink_idx, agent_deletions in enumerate(must_delete):
+    for source_sink_idx, agent_deletions in must_delete.items():
       agent_list = collected_sources_sinks_agent_states_geometries[source_sink_idx]
       if not isinstance(agent_deletions, list):
         agent_deletions = [agent_deletions]
@@ -339,7 +344,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
         key = key_reverse
         reversed = True
       else:
-        raise ValueError("Conflict resolution scheme for {} and {} not specified.".format(description1, description_2))
+        raise ValueError("Conflict resolution scheme for {} and {} not specified.".format(description1, description2))
     conflict_res_1 = self._conflict_resolutions[key][0]
     conflict_res_2 = self._conflict_resolutions[key][1]
     if reversed:
@@ -347,19 +352,9 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       conflict_res_1 = conflict_res_2
       conflict_res_2 = tmp
 
-    def int_or_float(s):
-      try:
-        int(s)
-        return True, int(s)
-      except:
-        try:
-          float(s)
-          return False, float(s)
-        except:
-          raise ValueError("Could not parse conflict resolution {}".format(s))
     
-    num_conflict_res1, is_int_1 = int_or_float(conflict_res_1)
-    num_conflict_res2, is_int_2 = int_or_float(conflict_res_1)
+    is_int_1 = isinstance(conflict_res_1, int)
+    is_int_2 = isinstance(conflict_res_2, int)
 
     if is_int_1 and is_int_2:
       probablistic_conflict_resolution = False
@@ -368,7 +363,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     else:
       raise ValueError("Conflict resolution specifications must be either both integers or both floats")
 
-    return num_conflict_res1, num_conflict_res2, probablistic_conflict_resolution
+    return conflict_res_1, conflict_res_2, probablistic_conflict_resolution
 
 
   def find_src_conf_idx_from_desc(self, desc):

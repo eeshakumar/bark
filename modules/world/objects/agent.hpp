@@ -125,6 +125,8 @@ class Agent : public Object {
 
   void SetRoadCorridor(const RoadCorridorPtr road_corridor) {
     road_corridor_ = road_corridor;
+    SetRoadCorridorRoadIds(road_corridor_->GetRoadIds());
+    SetRoadCorridorDrivingDirection(road_corridor_->GetDrivingDirection());
   }
 
   void BehaviorPlan(const float &dt, const ObservedWorld &observed_world);

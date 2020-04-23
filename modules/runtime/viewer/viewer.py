@@ -26,7 +26,7 @@ class BaseViewer(Viewer):
         self.color_other_agents_face = params["Visualization"]["Agents"]["Color"]["Other"]["Face", "Color of other agents", (0.7,0.7,0.7)]
         self.color_eval_agents_line = params["Visualization"]["Agents"]["Color"]["Controlled"]["Lines", "Color of controlled, evaluated agents", (0.9,0,0)]
         self.color_eval_agents_face = params["Visualization"]["Agents"]["Color"]["Controlled"]["Face", "Color of controlled, evaluated agents", (0.9,0,0)]
-        self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", False]
+        self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", True]
         self.alpha_eval_agent = params["Visualization"]["Agents"]["Alpha"]["Controlled", "Alpha of evalagents", 0.8]
         self.alpha_other_agents = params["Visualization"]["Agents"]["Alpha"]["Other", "Alpha of other agents", 1]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]

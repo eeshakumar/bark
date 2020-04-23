@@ -23,6 +23,7 @@ py_binary(
   data = [":notebooks_folder",
           "//python:bark.so",
           "//modules/runtime/tests:xodr_data",
+          "//examples:params",
           "@benchmark_database//data/database1:database1",
           ]
 )
