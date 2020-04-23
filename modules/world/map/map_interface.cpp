@@ -360,6 +360,7 @@ void MapInterface::GenerateRoadCorridor(
   road_corridor->SetRoads(roads);
   CalculateLaneCorridors(road_corridor, road_ids[0]);
   road_corridor->ComputeRoadPolygon();
+  road_corridor->SetRoadIds(road_ids);
   road_corridors_[road_corridor_hash] = road_corridor;
 }
 
