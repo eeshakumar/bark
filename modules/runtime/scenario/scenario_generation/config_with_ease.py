@@ -36,6 +36,7 @@ class LaneCorridorConfig:
     self._road_corridor = None
     self._params = params
     self._current_s = None
+    self._lane_corridor = None
 
     # set these params
     self._road_ids = kwargs.pop("road_ids", None)
@@ -174,10 +175,7 @@ class LaneCorridorConfig:
     else:
       lane_corr = self._road_corridor.lane_corridors[self._lane_corridor_id]
     # TODO: check
-    return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
-                                           (0.2, 0.2),
-                                           (0.1, 0.1),
-                                           (10., 15.))
+    return GoalDefinitionPolygon(lane_corr.polygon)
 
   def controlled_ids(self, agent_list):
     """Returns an ID-List of controlled agents

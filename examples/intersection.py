@@ -32,7 +32,6 @@ param_server["BehaviorIDMLaneTracking"]["CrosstrackErrorGain"] = 2.5
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 5.
 param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 10.
 param_server["BehaviorIntersectionRuleBased"]["PredictionTimeHorizon"] = 3.
-param_server["World"]["remove_agents_out_of_map"] = True
 
 lane_corridors = []
 lane_corridors.append(

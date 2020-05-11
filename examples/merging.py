@@ -26,17 +26,12 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
                params=None,
                **kwargs):
     super(CustomLaneCorridorConfig, self).__init__(params, **kwargs)
-  
-  def goal(self, world):
-    road_corr = world.map.GetRoadCorridor(
-      self._road_ids, XodrDrivingDirection.forward)
-    lane_corr = road_corr.lane_corridors[0]
-    return GoalDefinitionPolygon(road_corr.lane_corridors[0].polygon)
+
 
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
 param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 50.
-param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 2.
-param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 2.
+param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 3.
+param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 7.
 param_server["BehaviorSimpleRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 
@@ -46,6 +41,10 @@ left_lane = CustomLaneCorridorConfig(params=param_server,
                                      lane_corridor_id=0,
                                      road_ids=[0, 1],
                                      behavior_model=BehaviorMobilRuleBased(param_server),
+                                     ds_min=5.,
+                                     ds_max=5.,
+                                     min_vel=10.,
+                                     max_vel=10.,
                                      s_min=0.,
                                      s_max=50.)
 right_lane = CustomLaneCorridorConfig(params=param_server,
@@ -82,9 +81,9 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
 
-viewer = VideoRenderer(renderer=viewer,
-                       world_step_time=sim_step_time,
-                       fig_path="/Users/hart/2019/bark/video")
+# viewer = VideoRenderer(renderer=viewer,
+#                        world_step_time=sim_step_time,
+#                        fig_path="/Users/hart/2019/bark/video")
 
 env = Runtime(step_time=0.2,
               viewer=viewer,
@@ -92,11 +91,11 @@ env = Runtime(step_time=0.2,
               render=True)
 
 # run 3 scenarios
-for _ in range(0, 1):
+for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
   for step in range(0, 90):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 
-viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)
+# viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)

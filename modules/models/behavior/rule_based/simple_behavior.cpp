@@ -147,6 +147,11 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
   std::vector<LaneCorridorInformation> lane_corr_infos =
     ScanLaneCorridors(observed_world);
 
+  // TODO(@hart): check distance on ego corr
+
+  LaneCorridorInformation ego_lci = SelectLaneCorridor(
+    lane_corr_infos, GetLaneCorridor());
+
   // find all feasible LaneCorridors by filtering
   // 1. there should be enough remaining distance left
   lane_corr_infos =
@@ -165,6 +170,7 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
           fabs(li.rear.rel_velocity)*time_keeping_gap_);
       });
   // 3. enough space in front of the ego vehicle to merge
+  //    (change-to-lane and ego-lane)
   lane_corr_infos =
     FilterLaneCorridors(
       lane_corr_infos,
@@ -173,6 +179,11 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
           li.front.rel_distance >=
           min_vehicle_front_distance_);
         });
+  lane_corr_infos =
+    FilterLaneCorridors(
+      lane_corr_infos,
+      [this, ego_lci](LaneCorridorInformation li) {
+        return ego_lci.front.rel_distance >= min_vehicle_front_distance_; });
 
   return ChooseLaneCorridor(lane_corr_infos, observed_world);
 }
