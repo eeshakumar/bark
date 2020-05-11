@@ -60,14 +60,15 @@ AgentPtr BehaviorIntersectionRuleBased::GetIntersectingAgent(
     const auto& ego_pos = observed_world.CurrentEgoPosition();
     const auto& agent_state = agent.second->GetCurrentState();
     const auto& lane_corr = road_corr->GetCurrentLaneCorridor(agent_pos);
+    const auto& ego_lane_corr = observed_world.GetLaneCorridor();
     if (lane_corr != observed_world.GetLaneCorridor() &&
-        agent.second != observed_world.GetEgoAgent()) {
+        agent.second != observed_world.GetEgoAgent() &&
+        lane_corr && ego_lane_corr) {
       // only if s of intersecting agent is larger
-      double s_ego = std::get<1>(GetNearestPointAndS(
-        observed_world.GetLaneCorridor()->GetCenterLine(), ego_pos));
+      double s_ego = std::get<1>(
+        GetNearestPointAndS(lane_corr->GetCenterLine(), ego_pos));
       double s_other = std::get<1>(
-        GetNearestPointAndS(observed_world.GetLaneCorridor()->GetCenterLine(),
-        agent_pos));
+        GetNearestPointAndS(lane_corr->GetCenterLine(), agent_pos));
       double ego_angle = Norm0To2PI(ego_state[THETA_POSITION]);
       double other_angle = Norm0To2PI(agent_state[THETA_POSITION]);
       if (fabs(ego_angle - other_angle) > angle_diff_for_intersection_ &&
@@ -152,7 +153,7 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
     double vel_other = GetVelocity(std::get<1>(time_agent));
     std::get<0>(rel_values) = vel_other*std::get<0>(time_agent);
     // we want to break; set velocity to zero
-    std::get<1>(rel_values) = 0;
+    std::get<1>(rel_values) = 0.;
     LOG(INFO) << "Agent" << observed_world.GetEgoAgentId()
               << ": Agent " << std::get<1>(time_agent)->GetAgentId()
               << " is intersecing my corridor."<< std::endl;
