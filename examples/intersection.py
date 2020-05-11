@@ -31,31 +31,31 @@ param_server = ParameterServer()
 param_server["BehaviorIDMLaneTracking"]["CrosstrackErrorGain"] = 2.5
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 5.
 param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 10.
-param_server["BehaviorIntersectionRuleBased"]["PredictionTimeHorizon"] = 3.
+param_server["BehaviorIntersectionRuleBased"]["PredictionTimeHorizon"] = 2.
 
 lane_corridors = []
 lane_corridors.append(
   LaneCorridorConfig(params=param_server,
-                     source_pos=[-30, -3],
-                     sink_pos=[30, -3],
+                     source_pos=[-20, -2],
+                     sink_pos=[20, -2],
                      behavior_model=BehaviorIntersectionRuleBased(param_server),
-                     s_min=5.,
+                     s_min=0.,
                      s_max=25.))
 lane_corridors.append(
   LaneCorridorConfig(params=param_server,
-                     source_pos=[30, 3],
-                     sink_pos=[-30, 3],
+                     source_pos=[20, 2],
+                     sink_pos=[-20, 2],
                      behavior_model=BehaviorIntersectionRuleBased(param_server),
                      s_min=5.,
                      s_max=25.))
-lane_corridors.append(
-  LaneCorridorConfig(params=param_server,
-                     source_pos=[3, -30],
-                     sink_pos=[-30, 3],
-                     behavior_model=BehaviorIntersectionRuleBased(param_server),
-                     controlled_ids=True,
-                     s_min=5.,
-                     s_max=45.))
+# lane_corridors.append(
+#   LaneCorridorConfig(params=param_server,
+#                      source_pos=[2, -20],
+#                      sink_pos=[-20, 2],
+#                      behavior_model=BehaviorIntersectionRuleBased(param_server),
+#                      controlled_ids=True,
+#                      s_min=5.,
+#                      s_max=45.))
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,

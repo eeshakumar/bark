@@ -168,8 +168,6 @@ class LaneCorridorConfig:
     """Returns goal def.
     """
     # TODO: by default should be based on agent's pos
-    road_corr = world.map.GetRoadCorridor(
-      self._road_ids, XodrDrivingDirection.forward)
     if self._lane_corridor:
       lane_corr = self._lane_corridor
     else:

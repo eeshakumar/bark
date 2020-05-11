@@ -50,19 +50,21 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
 
   double acc_ego = 0., acc_change_ego = 0.,
          acc_behind = 0., acc_change_behind = 0.;
-  LaneCorridorInformation lci = SelectLaneCorridor(
+  std::pair<LaneCorridorInformation, bool> lci = SelectLaneCorridor(
     lane_corr_infos, GetLaneCorridor());
-  if (lci.front.agent_info.first)
-    acc_ego = CalcIDMAcc(
-      lci.front.rel_distance,
-      GetVelocity(observed_world.GetEgoAgent()),
-      GetVelocity(lci.front.agent_info.first));
-  if (lci.rear.agent_info.first)
-    acc_behind = CalcIDMAcc(
-      -lci.rear.rel_distance,
-      GetVelocity(lci.rear.agent_info.first),
-      GetVelocity(observed_world.GetEgoAgent()));
-
+  if (lci.second) {
+    const auto& lane_corr_info = lci.first;
+    if (lane_corr_info.front.agent_info.first)
+      acc_ego = CalcIDMAcc(
+        lane_corr_info.front.rel_distance,
+        GetVelocity(observed_world.GetEgoAgent()),
+        GetVelocity(lane_corr_info.front.agent_info.first));
+    if (lane_corr_info.rear.agent_info.first)
+      acc_behind = CalcIDMAcc(
+        -lane_corr_info.rear.rel_distance,
+        GetVelocity(lane_corr_info.rear.agent_info.first),
+        GetVelocity(observed_world.GetEgoAgent()));
+  }
   if (lane_corr_infos.size() > 0) {
     // select corridor with most free space
     double max_advantage = -100.;

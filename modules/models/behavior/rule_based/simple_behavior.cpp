@@ -129,7 +129,7 @@ BehaviorSimpleRuleBased::ChooseLaneCorridor(
         tmp_lane_corr = li.lane_corridor;
       }
     }
-    if (tmp_lane_corr != lane_corr) {
+    if (tmp_lane_corr != lane_corr && !tmp_lane_corr) {
       LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
                 << " is changing lanes." << std::endl;
       lane_corr = tmp_lane_corr;
@@ -149,7 +149,7 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
 
   // TODO(@hart): check distance on ego corr
 
-  LaneCorridorInformation ego_lci = SelectLaneCorridor(
+  std::pair<LaneCorridorInformation, bool> ego_lci = SelectLaneCorridor(
     lane_corr_infos, GetLaneCorridor());
 
   // find all feasible LaneCorridors by filtering
@@ -179,11 +179,14 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
           li.front.rel_distance >=
           min_vehicle_front_distance_);
         });
-  lane_corr_infos =
-    FilterLaneCorridors(
-      lane_corr_infos,
-      [this, ego_lci](LaneCorridorInformation li) {
-        return ego_lci.front.rel_distance >= min_vehicle_front_distance_; });
+  if (ego_lci.second) {
+    lane_corr_infos =
+      FilterLaneCorridors(
+        lane_corr_infos,
+        [this, ego_lci](LaneCorridorInformation li) {
+          return ego_lci.first.front.rel_distance >=
+                 min_vehicle_front_distance_; });
+  }
 
   return ChooseLaneCorridor(lane_corr_infos, observed_world);
 }
