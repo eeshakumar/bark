@@ -19,8 +19,8 @@ def bark_dependencies():
     _maybe(
     http_archive,
     name = "pybind11",
-    strip_prefix = "pybind11-2.3.0",
-    urls = ["https://github.com/pybind/pybind11/archive/v2.3.0.zip"],
+    strip_prefix = "pybind11-2.5.0",
+    urls = ["https://github.com/pybind/pybind11/archive/v2.5.0.zip"],
     build_file = "@bark_project//tools/pybind11:pybind.BUILD"
     )
 
@@ -72,7 +72,7 @@ glog_library(with_gflags=0)
     _maybe(
     native.new_local_repository,
     name = "python_linux",
-    path = "./python/venv/",
+    path = "./bark/python_wrapper/venv/",
     build_file_content = """
 cc_library(
     name = "python-lib",
@@ -82,6 +82,13 @@ cc_library(
     visibility = ["//visibility:public"],
 )
     """
+    )
+
+    _maybe(
+    git_repository,
+    name = "rule_monitor_project",
+    commit = "406b9003ce5d33ac8530d7944a8f6bbd4b3822d8",
+    remote = "https://github.com/bark-simulator/rule-monitoring.git",
     )
 
 def _maybe(repo_rule, name, **kwargs):
